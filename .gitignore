@@ -58,4 +58,8 @@ nunit-*.xml
 bin/
 obj/
 *.user
+<<<<<<< HEAD
 *.suo
+=======
+*.suo
+>>>>>>> 4b414b4973d871fa47bbf8ebdac815b65113c652
