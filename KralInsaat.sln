@@ -1,0 +1,43 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.37012.4 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KralInsaat.API", "KralInsaatAPI\KralInsaat.API.csproj", "{459B583F-D1C0-420B-AAD6-50A00D94B017}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KralInsaat.Common", "KralInsaat.Common\KralInsaat.Common.csproj", "{E4BC484E-96D3-4974-A123-8E2A2BBF9AEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KralInsaat.Db", "KralInsaat.Db\KralInsaat.Db.csproj", "{3460A6BA-F349-4A42-820A-F18B1592939E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KralInsaat.Services", "KralInsaat.Services\KralInsaat.Services.csproj", "{84747CEF-BD15-4602-91AD-48BB1B8D2798}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{459B583F-D1C0-420B-AAD6-50A00D94B017}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{459B583F-D1C0-420B-AAD6-50A00D94B017}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{459B583F-D1C0-420B-AAD6-50A00D94B017}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{459B583F-D1C0-420B-AAD6-50A00D94B017}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E4BC484E-96D3-4974-A123-8E2A2BBF9AEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E4BC484E-96D3-4974-A123-8E2A2BBF9AEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E4BC484E-96D3-4974-A123-8E2A2BBF9AEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E4BC484E-96D3-4974-A123-8E2A2BBF9AEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3460A6BA-F349-4A42-820A-F18B1592939E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3460A6BA-F349-4A42-820A-F18B1592939E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3460A6BA-F349-4A42-820A-F18B1592939E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3460A6BA-F349-4A42-820A-F18B1592939E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{84747CEF-BD15-4602-91AD-48BB1B8D2798}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84747CEF-BD15-4602-91AD-48BB1B8D2798}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84747CEF-BD15-4602-91AD-48BB1B8D2798}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84747CEF-BD15-4602-91AD-48BB1B8D2798}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E0EC1B3-916F-47D1-AF27-A919781DCAB0}
+	EndGlobalSection
+EndGlobal
