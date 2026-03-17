@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
-namespace Zorafat.Api
+namespace KralInsaat.API
 {
     public class Program
     {
@@ -95,8 +95,11 @@ namespace Zorafat.Api
             builder.Services.AddScoped<ICompanyService, CompanyService>();
             builder.Services.AddScoped<IFaqService, FaqService>();
             builder.Services.AddScoped<ITermsService, TermsService>();
+            builder.Services.AddScoped<ISocialMediaAccountService, SocialMediaAccountService>();
 
             var app = builder.Build();
+
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment()) 
@@ -118,7 +121,9 @@ namespace Zorafat.Api
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+
             app.UseCors(_corsAllowAny);
 
             app.MapControllers();

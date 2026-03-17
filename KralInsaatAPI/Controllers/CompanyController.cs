@@ -1,11 +1,12 @@
-﻿using KralInsaat.Common.DTOs.Brand;
+﻿using KralInsaat.API.Controllers.Base;
+using KralInsaat.Common.DTOs.Brand;
 using KralInsaat.Common.DTOs.Company;
 using KralInsaat.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KralInsaat.API.Controllers
 {
-    public class CompanyController : ControllerBase
+    public class CompanyController : BaseController
     {
         private readonly ICompanyService _companyservice;
 

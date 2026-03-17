@@ -1,11 +1,12 @@
-﻿using KralInsaat.Common.DTOs.Brand;
+﻿using KralInsaat.API.Controllers.Base;
+using KralInsaat.Common.DTOs.Brand;
 using KralInsaat.Common.DTOs.Category;
 using KralInsaat.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KralInsaat.API.Controllers
 {
-    public class CategoryController : ControllerBase
+    public class CategoryController : BaseController
     {
         private readonly ICategoryService _categoryservice;
 

@@ -1,10 +1,11 @@
-﻿using KralInsaat.Common.DTOs.Terms;
+﻿using KralInsaat.API.Controllers.Base;
+using KralInsaat.Common.DTOs.Terms;
 using KralInsaat.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KralInsaat.API.Controllers
 {
-    public class TermsController : ControllerBase
+    public class TermsController : BaseController
     {
         private readonly ITermsService _termsService;
 

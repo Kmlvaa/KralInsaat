@@ -1,10 +1,11 @@
-﻿using KralInsaat.Common.DTOs.Brand;
+﻿using KralInsaat.API.Controllers.Base;
+using KralInsaat.Common.DTOs.Brand;
 using KralInsaat.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KralInsaat.API.Controllers
 {
-    public class BrandController : ControllerBase
+    public class BrandController : BaseController
     {
         private readonly IBrandService _brandservice;
 

@@ -1,10 +1,11 @@
-﻿using KralInsaat.Common.DTOs.Service;
+﻿using KralInsaat.API.Controllers.Base;
+using KralInsaat.Common.DTOs.Service;
 using KralInsaat.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KralInsaat.API.Controllers
 {
-    public class ServiceController : ControllerBase
+    public class ServiceController : BaseController
     {
         private readonly IServiceService _service;
 

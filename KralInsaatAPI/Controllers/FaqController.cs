@@ -1,10 +1,11 @@
-﻿using KralInsaat.Common.DTOs.Faq;
+﻿using KralInsaat.API.Controllers.Base;
+using KralInsaat.Common.DTOs.Faq;
 using KralInsaat.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KralInsaat.API.Controllers
 {
-    public class FaqController : ControllerBase
+    public class FaqController : BaseController
     {
         private readonly IFaqService _faqservice;
 

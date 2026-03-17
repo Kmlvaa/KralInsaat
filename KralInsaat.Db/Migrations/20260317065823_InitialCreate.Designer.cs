@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KralInsaat.Db.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260316101856_EntitiesAdded")]
-    partial class EntitiesAdded
+    [Migration("20260317065823_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -169,6 +169,37 @@ namespace KralInsaat.Db.Migrations
                     b.HasKey("ServiceId");
 
                     b.ToTable("Services");
+                });
+
+            modelBuilder.Entity("KralInsaat.Common.Entities.SocialMediaAccountEntity", b =>
+                {
+                    b.Property<int>("SocialMediaAccountId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SocialMediaAccountId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("SocialMediaAccountIcon")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SocialMediaAccountPlatform")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SocialMediaAccountUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("SocialMediaAccountId");
+
+                    b.ToTable("SocialMediaAccounts");
                 });
 
             modelBuilder.Entity("KralInsaat.Common.Entities.TermsEntity", b =>

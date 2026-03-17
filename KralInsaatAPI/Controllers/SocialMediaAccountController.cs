@@ -1,10 +1,11 @@
-﻿using KralInsaat.Common.DTOs.SocialMediaAccount;
+﻿using KralInsaat.API.Controllers.Base;
+using KralInsaat.Common.DTOs.SocialMediaAccount;
 using KralInsaat.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KralInsaat.API.Controllers
 {
-    public class SocialMediaAccountController : ControllerBase
+    public class SocialMediaAccountController : BaseController
     {
         private readonly ISocialMediaAccountService _socialMediaAccountservice;
 
