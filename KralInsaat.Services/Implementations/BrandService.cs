@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using KralInsaat.Common.DTOs.Brand;
 using KralInsaat.Common.Entities;
+using KralInsaat.Common.Exceptions;
 using KralInsaat.Db;
-using Microsoft.EntityFrameworkCore;
 using KralInsaat.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace KralInsaat.Services.Implementations
 {
@@ -32,7 +33,7 @@ namespace KralInsaat.Services.Implementations
         {
             var brand = await _appDbContext.Brands
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.BrandId == brandId) ?? throw new Exception("Brand not found");
+                .FirstOrDefaultAsync(x => x.BrandId == brandId) ?? throw new NotFoundException("Brand not found");
 
             var dto = _mapper.Map<GetBrandDTO>(brand);
 
@@ -50,7 +51,7 @@ namespace KralInsaat.Services.Implementations
         public async Task UpdateBrandAsync(int brandId, UpdateBrandDTO model)
         {
             var brand = await _appDbContext.Brands
-                .FirstOrDefaultAsync(x => x.BrandId == brandId) ?? throw new Exception("Brand not found");
+                .FirstOrDefaultAsync(x => x.BrandId == brandId) ?? throw new NotFoundException("Brand not found");
 
             _mapper.Map(model, brand);
             await _appDbContext.SaveChangesAsync();
@@ -59,7 +60,7 @@ namespace KralInsaat.Services.Implementations
         public async Task DeleteBrandAsync(int brandId)
         {
             var brand = await _appDbContext.Brands
-                .FirstOrDefaultAsync(x => x.BrandId == brandId) ?? throw new Exception("Brand not found");
+                .FirstOrDefaultAsync(x => x.BrandId == brandId) ?? throw new NotFoundException("Brand not found");
 
             _appDbContext.Brands.Remove(brand);
             await _appDbContext.SaveChangesAsync();

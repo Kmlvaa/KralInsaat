@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KralInsaat.Common.DTOs.Service;
 using KralInsaat.Common.Entities;
+using KralInsaat.Common.Exceptions;
 using KralInsaat.Db;
 using KralInsaat.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,7 @@ namespace KralInsaat.Services.Implementations
         {
             var service = await _appDbContext.Services
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.ServiceId == serviceId) ?? throw new Exception("Service not found");
+                .FirstOrDefaultAsync(x => x.ServiceId == serviceId) ?? throw new NotFoundException("Service not found");
 
             var dto = _mapper.Map<GetServiceDTO>(service);
 
@@ -50,7 +51,7 @@ namespace KralInsaat.Services.Implementations
         public async Task UpdateServiceAsync(int serviceId, UpdateServiceDTO model)
         {
             var service = await _appDbContext.Services
-                .FirstOrDefaultAsync(x => x.ServiceId == serviceId) ?? throw new Exception("Service not found");
+                .FirstOrDefaultAsync(x => x.ServiceId == serviceId) ?? throw new NotFoundException("Service not found");
 
             _mapper.Map(model, service);
             await _appDbContext.SaveChangesAsync();
@@ -59,7 +60,7 @@ namespace KralInsaat.Services.Implementations
         public async Task DeleteServiceAsync(int serviceId)
         {
             var service = await _appDbContext.Services
-                .FirstOrDefaultAsync(x => x.ServiceId == serviceId) ?? throw new Exception("Service not found");
+                .FirstOrDefaultAsync(x => x.ServiceId == serviceId) ?? throw new NotFoundException("Service not found");
 
             _appDbContext.Services.Remove(service);
             await _appDbContext.SaveChangesAsync();

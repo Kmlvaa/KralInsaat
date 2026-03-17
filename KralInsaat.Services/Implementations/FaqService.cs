@@ -4,6 +4,7 @@ using KralInsaat.Common.Entities;
 using KralInsaat.Db;
 using Microsoft.EntityFrameworkCore;
 using KralInsaat.Services.Interfaces;
+using KralInsaat.Common.Exceptions;
 
 namespace KralInsaat.Services.Implementations
 {
@@ -32,7 +33,7 @@ namespace KralInsaat.Services.Implementations
         {
             var faq = await _appDbContext.Faqs
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.FaqId == faqId) ?? throw new Exception("Faq not found");
+                .FirstOrDefaultAsync(x => x.FaqId == faqId) ?? throw new NotFoundException("Faq not found");
 
             var dto = _mapper.Map<GetFaqDTO>(faq);
 
@@ -50,7 +51,7 @@ namespace KralInsaat.Services.Implementations
         public async Task UpdateFaqAsync(int faqId, UpdateFaqDTO model)
         {
             var faq = await _appDbContext.Faqs
-                .FirstOrDefaultAsync(x => x.FaqId == faqId) ?? throw new Exception("Faq not found");
+                .FirstOrDefaultAsync(x => x.FaqId == faqId) ?? throw new NotFoundException("Faq not found");
 
             _mapper.Map(model, faq);
             await _appDbContext.SaveChangesAsync();
@@ -59,7 +60,7 @@ namespace KralInsaat.Services.Implementations
         public async Task DeleteFaqAsync(int faqId)
         {
             var faq = await _appDbContext.Faqs
-                .FirstOrDefaultAsync(x => x.FaqId == faqId) ?? throw new Exception("Faq not found");
+                .FirstOrDefaultAsync(x => x.FaqId == faqId) ?? throw new NotFoundException("Faq not found");
 
             _appDbContext.Faqs.Remove(faq);
             await _appDbContext.SaveChangesAsync();

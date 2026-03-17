@@ -4,6 +4,7 @@ using KralInsaat.Common.Entities;
 using KralInsaat.Db;
 using Microsoft.EntityFrameworkCore;
 using KralInsaat.Services.Interfaces;
+using KralInsaat.Common.Exceptions;
 
 namespace KralInsaat.Services.Implementations
 {
@@ -32,7 +33,7 @@ namespace KralInsaat.Services.Implementations
         {
             var terms = await _appDbContext.Terms
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.TermsId == termsId) ?? throw new Exception("Terms not found");
+                .FirstOrDefaultAsync(x => x.TermsId == termsId) ?? throw new NotFoundException("Terms not found");
 
             var dto = _mapper.Map<GetTermsDTO>(terms);
 
@@ -50,7 +51,7 @@ namespace KralInsaat.Services.Implementations
         public async Task UpdateTermsAsync(int termsId, UpdateTermsDTO model)
         {
             var terms = await _appDbContext.Terms
-                .FirstOrDefaultAsync(x => x.TermsId == termsId) ?? throw new Exception("Terms not found");
+                .FirstOrDefaultAsync(x => x.TermsId == termsId) ?? throw new NotFoundException("Terms not found");
 
             _mapper.Map(model, terms);
             await _appDbContext.SaveChangesAsync();
@@ -59,7 +60,7 @@ namespace KralInsaat.Services.Implementations
         public async Task DeleteTermsAsync(int termsId)
         {
             var terms = await _appDbContext.Terms
-                .FirstOrDefaultAsync(x => x.TermsId == termsId) ?? throw new Exception("Terms not found");
+                .FirstOrDefaultAsync(x => x.TermsId == termsId) ?? throw new NotFoundException("Terms not found");
 
             _appDbContext.Terms.Remove(terms);
             await _appDbContext.SaveChangesAsync();

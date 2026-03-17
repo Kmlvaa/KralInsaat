@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KralInsaat.Common.DTOs.Branch;
 using KralInsaat.Common.DTOs.Brand;
 using KralInsaat.Common.DTOs.Category;
 using KralInsaat.Common.DTOs.Company;
@@ -7,12 +8,13 @@ using KralInsaat.Common.DTOs.Service;
 using KralInsaat.Common.DTOs.SocialMediaAccount;
 using KralInsaat.Common.DTOs.Terms;
 using KralInsaat.Common.Entities;
+using KralInsaat.Common.ValueObjects;
 
 namespace KralInsaat.Services.Automapper
 {
     public class MapperProfile : Profile
     {
-        public MapperProfile() 
+        public MapperProfile()
         {
             CreateMap<ServiceEntity, GetServiceDTO>();
             CreateMap<CreateServiceDTO, ServiceEntity>();
@@ -41,6 +43,14 @@ namespace KralInsaat.Services.Automapper
             CreateMap<SocialMediaAccountEntity, GetSocialMediaAccountDTO>();
             CreateMap<CreateSocialMediaAccountDTO, SocialMediaAccountEntity>();
             CreateMap<UpdateSocialMediaAccountDTO, SocialMediaAccountEntity>();
+
+            CreateMap<BranchEntity, GetBranchDTO>()
+               .ForMember(dest => dest.Latitude, opt => opt.MapFrom(src => src.Location.Latitude))
+               .ForMember(dest => dest.Longitude, opt => opt.MapFrom(src => src.Location.Longitude));
+            CreateMap<CreateBranchDTO, BranchEntity>()
+               .ForMember(dest => dest.Location, opt => opt.MapFrom(src => new Coordinates(src.Latitude, src.Longitude)));
+            CreateMap<UpdateBranchDTO, BranchEntity>()
+               .ForMember(dest => dest.Location, opt => opt.MapFrom(src => new Coordinates(src.Latitude, src.Longitude)));
         }
     }
 }

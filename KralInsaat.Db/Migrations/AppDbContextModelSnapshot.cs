@@ -22,6 +22,48 @@ namespace KralInsaat.Db.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("KralInsaat.Common.Entities.BranchEntity", b =>
+                {
+                    b.Property<int>("BranchId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BranchId"));
+
+                    b.Property<string>("BranchAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchPhoneNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("BranchWhatsappNumber")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("BranchId");
+
+                    b.HasIndex("CompanyId");
+
+                    b.ToTable("CompanyBranches");
+                });
+
             modelBuilder.Entity("KralInsaat.Common.Entities.BrandEntity", b =>
                 {
                     b.Property<int>("BrandId")
@@ -160,11 +202,11 @@ namespace KralInsaat.Db.Migrations
                     b.Property<string>("ProductName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal?>("ProductPrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("ProductPrice")
+                        .HasColumnType("float");
 
-                    b.Property<decimal?>("ProductSalePrice")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<double?>("ProductSalePrice")
+                        .HasColumnType("float");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -391,10 +433,6 @@ namespace KralInsaat.Db.Migrations
                         .HasDatabaseName("UserNameIndex")
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                    b.HasIndex("UserName")
-                        .IsUnique()
-                        .HasFilter("[UserName] IS NOT NULL");
-
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
@@ -531,6 +569,43 @@ namespace KralInsaat.Db.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("KralInsaat.Common.Entities.BranchEntity", b =>
+                {
+                    b.HasOne("KralInsaat.Common.Entities.CompanyEntity", "Company")
+                        .WithMany("Branches")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.OwnsOne("KralInsaat.Common.ValueObjects.Coordinates", "Location", b1 =>
+                        {
+                            b1.Property<int>("BranchEntityBranchId")
+                                .HasColumnType("int");
+
+                            b1.Property<double>("Latitude")
+                                .HasPrecision(9, 6)
+                                .HasColumnType("float(9)")
+                                .HasColumnName("Latitude");
+
+                            b1.Property<double>("Longitude")
+                                .HasPrecision(9, 6)
+                                .HasColumnType("float(9)")
+                                .HasColumnName("Longitude");
+
+                            b1.HasKey("BranchEntityBranchId");
+
+                            b1.ToTable("CompanyBranches");
+
+                            b1.WithOwner()
+                                .HasForeignKey("BranchEntityBranchId");
+                        });
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Location")
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("KralInsaat.Common.Entities.ProductEntity", b =>
                 {
                     b.HasOne("KralInsaat.Common.Entities.BrandEntity", "Brand")
@@ -610,6 +685,11 @@ namespace KralInsaat.Db.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("KralInsaat.Common.Entities.CompanyEntity", b =>
+                {
+                    b.Navigation("Branches");
                 });
 
             modelBuilder.Entity("KralInsaat.Common.Entities.ProductEntity", b =>

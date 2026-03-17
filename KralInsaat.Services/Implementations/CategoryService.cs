@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KralInsaat.Common.DTOs.Category;
 using KralInsaat.Common.Entities;
+using KralInsaat.Common.Exceptions;
 using KralInsaat.Db;
 using KralInsaat.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,7 @@ namespace KralInsaat.Services.Implementations
         {
             var category = await _appDbContext.Categories
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.CategoryId == categoryId) ?? throw new Exception("Service not found");
+                .FirstOrDefaultAsync(x => x.CategoryId == categoryId) ?? throw new NotFoundException("Category not found");
 
             var dto = _mapper.Map<GetCategoryDTO>(categoryId);
 
@@ -50,7 +51,7 @@ namespace KralInsaat.Services.Implementations
         public async Task UpdateCategoryAsync(int categoryId, UpdateCategoryDTO model)
         {
             var category = await _appDbContext.Categories
-                .FirstOrDefaultAsync(x => x.CategoryId == categoryId) ?? throw new Exception("Service not found");
+                .FirstOrDefaultAsync(x => x.CategoryId == categoryId) ?? throw new NotFoundException("Category not found");
 
             _mapper.Map(model, category);
             await _appDbContext.SaveChangesAsync();
@@ -59,7 +60,7 @@ namespace KralInsaat.Services.Implementations
         public async Task DeleteCategoryAsync(int categoryId)
         {
             var category = await _appDbContext.Categories
-                .FirstOrDefaultAsync(x => x.CategoryId == categoryId) ?? throw new Exception("Service not found");
+                .FirstOrDefaultAsync(x => x.CategoryId == categoryId) ?? throw new NotFoundException("Category not found");
 
             _appDbContext.Categories.Remove(category);
             await _appDbContext.SaveChangesAsync();

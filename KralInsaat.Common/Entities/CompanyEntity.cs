@@ -9,6 +9,7 @@ namespace KralInsaat.Common.Entities
         public string? CompanyName { get; set; }
         public string? CompanyDescription { get; set; }
         public string? CompanyLogo { get; set; }
+        public List<BranchEntity> Branches { get; set; } = [];
     }
 }
  

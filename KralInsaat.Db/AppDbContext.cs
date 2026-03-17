@@ -16,27 +16,43 @@ namespace KralInsaat.Db
         }
 
         public DbSet<AppUser> AppUsers { get; set; }
-        public DbSet<ServiceEntity> Services { get; set; } 
+        public DbSet<ServiceEntity> Services { get; set; }
         public DbSet<BrandEntity> Brands { get; set; }
         public DbSet<CategoryEntity> Categories { get; set; }
         public DbSet<CompanyEntity> Companies { get; set; }
         public DbSet<FaqEntity> Faqs { get; set; }
         public DbSet<TermsEntity> Terms { get; set; }
         public DbSet<SocialMediaAccountEntity> SocialMediaAccounts { get; set; }
-        public DbSet<ProductEntity> Products { get; set; } 
+        public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductImagesEntity> ProductImages { get; set; }
+        public DbSet<BranchEntity> CompanyBranches { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder) 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<AppUser>()
-               .HasIndex(x => x.UserName)
-               .IsUnique();
-
-            modelBuilder.Entity<AppUser>()
               .HasIndex(x => x.Email)
               .IsUnique();
+
+            modelBuilder.Entity<BranchEntity>()
+                .HasOne(b => b.Company)
+                .WithMany(c => c.Branches)
+                .HasForeignKey(b => b.CompanyId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<BranchEntity>(builder =>
+            {
+                builder.OwnsOne(c => c.Location, owned =>
+                {
+                    owned.Property(p => p.Latitude)
+                         .HasColumnName("Latitude")
+                         .HasPrecision(9, 6);
+                    owned.Property(p => p.Longitude)
+                         .HasColumnName("Longitude")
+                         .HasPrecision(9, 6);
+                });
+            });
 
             ApplyGlobalFilters<IBaseEntity>(modelBuilder, e => e.DeletedAt == null);
         }
@@ -64,7 +80,7 @@ namespace KralInsaat.Db
 
         public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
         {
-            AddEntryHistory();
+            //AddEntryHistory();
             return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
         }
 
@@ -83,7 +99,7 @@ namespace KralInsaat.Db
                     entry.State = EntityState.Modified;
                     entity.DeletedAt = DateTime.UtcNow;
                 }
-                
+
                 if (entry.State == EntityState.Added)
                 {
                     entity.CreatedAt = DateTime.UtcNow;

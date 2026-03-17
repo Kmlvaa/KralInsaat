@@ -4,6 +4,7 @@ using KralInsaat.Common.Entities;
 using KralInsaat.Db;
 using Microsoft.EntityFrameworkCore;
 using KralInsaat.Services.Interfaces;
+using KralInsaat.Common.Exceptions;
 
 namespace KralInsaat.Services.Implementations
 {
@@ -32,7 +33,7 @@ namespace KralInsaat.Services.Implementations
         {
             var company = await _appDbContext.Companies
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.CompanyId == companyId) ?? throw new Exception("Company not found");
+                .FirstOrDefaultAsync(x => x.CompanyId == companyId) ?? throw new NotFoundException("Company not found");
 
             var dto = _mapper.Map<GetCompanyDTO>(company);
 
@@ -50,7 +51,7 @@ namespace KralInsaat.Services.Implementations
         public async Task UpdateCompanyAsync(int companyId, UpdateCompanyDTO model)
         {
             var company = await _appDbContext.Companies
-                .FirstOrDefaultAsync(x => x.CompanyId == companyId) ?? throw new Exception("Company not found");
+                .FirstOrDefaultAsync(x => x.CompanyId == companyId) ?? throw new NotFoundException("Company not found");
 
             _mapper.Map(model, company);
             await _appDbContext.SaveChangesAsync();
@@ -59,7 +60,7 @@ namespace KralInsaat.Services.Implementations
         public async Task DeleteCompanyAsync(int companyId)
         {
             var company = await _appDbContext.Companies
-                .FirstOrDefaultAsync(x => x.CompanyId == companyId) ?? throw new Exception("Company not found");
+                .FirstOrDefaultAsync(x => x.CompanyId == companyId) ?? throw new NotFoundException("Company not found");
 
             _appDbContext.Companies.Remove(company);
             await _appDbContext.SaveChangesAsync();

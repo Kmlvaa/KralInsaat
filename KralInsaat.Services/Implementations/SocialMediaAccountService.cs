@@ -4,6 +4,7 @@ using KralInsaat.Common.Entities;
 using KralInsaat.Db;
 using Microsoft.EntityFrameworkCore;
 using KralInsaat.Services.Interfaces;
+using KralInsaat.Common.Exceptions;
 
 namespace KralInsaat.Services.Implementations
 {
@@ -32,7 +33,7 @@ namespace KralInsaat.Services.Implementations
         {
             var socialMediaAccounts = await _appDbContext.SocialMediaAccounts
                 .AsNoTracking()
-                .FirstOrDefaultAsync(x => x.SocialMediaAccountId == accountId) ?? throw new Exception("SocialMediaAccount not found");
+                .FirstOrDefaultAsync(x => x.SocialMediaAccountId == accountId) ?? throw new NotFoundException("Account not found");
 
             var dto = _mapper.Map<GetSocialMediaAccountDTO>(socialMediaAccounts);
 
@@ -50,7 +51,7 @@ namespace KralInsaat.Services.Implementations
         public async Task UpdateSocialMediaAccountAsync(int accountId, UpdateSocialMediaAccountDTO model)
         {
             var socialMediaAccount = await _appDbContext.SocialMediaAccounts
-                .FirstOrDefaultAsync(x => x.SocialMediaAccountId == accountId) ?? throw new Exception("SocialMediaAccount not found");
+                .FirstOrDefaultAsync(x => x.SocialMediaAccountId == accountId) ?? throw new NotFoundException("Account not found");
 
             _mapper.Map(model, socialMediaAccount);
             await _appDbContext.SaveChangesAsync();
@@ -59,7 +60,7 @@ namespace KralInsaat.Services.Implementations
         public async Task DeleteSocialMediaAccountAsync(int accountId)
         {
             var socialMediaAccount = await _appDbContext.SocialMediaAccounts
-                .FirstOrDefaultAsync(x => x.SocialMediaAccountId == accountId) ?? throw new Exception("SocialMediaAccount not found");
+                .FirstOrDefaultAsync(x => x.SocialMediaAccountId == accountId) ?? throw new NotFoundException("Account not found");
 
             _appDbContext.SocialMediaAccounts.Remove(socialMediaAccount);
             await _appDbContext.SaveChangesAsync();
