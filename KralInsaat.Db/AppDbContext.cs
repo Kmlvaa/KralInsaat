@@ -26,6 +26,9 @@ namespace KralInsaat.Db
         public DbSet<ProductEntity> Products { get; set; }
         public DbSet<ProductImagesEntity> ProductImages { get; set; }
         public DbSet<BranchEntity> CompanyBranches { get; set; }
+        public DbSet<ParameterEntity> Parameters { get; set; }
+        public DbSet<CategoryParameterEntity> CategoryParameters { get; set; }
+        public DbSet<ProductParameterEntity> ProductParameters { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

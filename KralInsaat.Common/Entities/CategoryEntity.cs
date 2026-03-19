@@ -7,7 +7,10 @@ namespace KralInsaat.Common.Entities
     {
         [Key]
         public int CategoryId { get; set; }
+        public List<ProductEntity> Products { get; set; } = [];
+        public List<CategoryParameterEntity> CategoryParameters { get; set; } = [];
         public string? CategoryName { get; set; }
         public string? CategoryCoverImage { get; set; }
     }
 }
+ 

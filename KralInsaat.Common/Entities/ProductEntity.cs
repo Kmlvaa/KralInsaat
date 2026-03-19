@@ -15,6 +15,8 @@ namespace KralInsaat.Common.Entities
         public string? ProductDescription { get; set; }
         public double? ProductPrice { get; set; }
         public double? ProductSalePrice { get; set; }
-        public List<ProductImagesEntity> Images { get; set; } = [];
+        public List<ProductImagesEntity> ProductImages { get; set; } = [];
+        public List<ProductParameterEntity> ProductParameters { get; set; } = [];
     } 
 }
+ 
