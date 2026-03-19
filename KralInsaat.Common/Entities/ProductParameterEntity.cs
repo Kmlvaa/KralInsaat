@@ -1,6 +1,8 @@
 ﻿using KralInsaat.Common.Entities.Base;
 using KralInsaat.Common.Enums;
+using KralInsaat.Common.Exceptions;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 
 namespace KralInsaat.Common.Entities
 {
@@ -26,26 +28,47 @@ namespace KralInsaat.Common.Entities
             BoolValue = null;
             StringValue = null;
 
-            switch (Parameter.ParameterDataType)
+            try
             {
-                case ParameterDataTypeEnum.Int:
-                    IntValue = Convert.ToInt32(value);
-                    break;
+                switch (Parameter.ParameterDataType)
+                {
+                    case ParameterDataTypeEnum.Int:
+                        if (value is JsonElement jeInt && jeInt.ValueKind == JsonValueKind.Number)
+                            IntValue = jeInt.GetInt32();
+                        else
+                            IntValue = Convert.ToInt32(value);
+                        break;
 
-                case ParameterDataTypeEnum.Decimal:
-                    DecimalValue = Convert.ToDecimal(value);
-                    break;
+                    case ParameterDataTypeEnum.Decimal:
+                        if (value is JsonElement jeDec && jeDec.ValueKind == JsonValueKind.Number)
+                            DecimalValue = jeDec.GetDecimal();
+                        else
+                            DecimalValue = Convert.ToDecimal(value);
+                        break;
 
-                case ParameterDataTypeEnum.Bool:
-                    BoolValue = Convert.ToBoolean(value);
-                    break;
+                    case ParameterDataTypeEnum.Bool:
+                        if (value is JsonElement jeBool && jeBool.ValueKind == JsonValueKind.True)
+                            BoolValue = true;
+                        else if (value is JsonElement jeBool2 && jeBool2.ValueKind == JsonValueKind.False)
+                            BoolValue = false;
+                        else
+                            BoolValue = Convert.ToBoolean(value);
+                        break;
 
-                case ParameterDataTypeEnum.String:
-                    StringValue = Convert.ToString(value);
-                    break;
+                    case ParameterDataTypeEnum.String:
+                        if (value is JsonElement jeStr && jeStr.ValueKind == JsonValueKind.String)
+                            StringValue = jeStr.GetString();
+                        else
+                            StringValue = Convert.ToString(value);
+                        break;
 
-                default:
-                    throw new NotSupportedException();
+                    default:
+                        throw new NotSupportedException();
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new BadRequestException($"Invalid value for parameter {Parameter.ParameterName}: {ex.Message}");
             }
         }
     }

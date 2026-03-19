@@ -2,8 +2,12 @@
 using KralInsaat.Common.DTOs.Branch;
 using KralInsaat.Common.DTOs.Brand;
 using KralInsaat.Common.DTOs.Category;
+using KralInsaat.Common.DTOs.CategoryParameter;
 using KralInsaat.Common.DTOs.Company;
 using KralInsaat.Common.DTOs.Faq;
+using KralInsaat.Common.DTOs.Parameter;
+using KralInsaat.Common.DTOs.Product;
+using KralInsaat.Common.DTOs.ProductImages;
 using KralInsaat.Common.DTOs.Service;
 using KralInsaat.Common.DTOs.SocialMediaAccount;
 using KralInsaat.Common.DTOs.Terms;
@@ -51,6 +55,33 @@ namespace KralInsaat.Services.Automapper
                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => new Coordinates(src.Latitude, src.Longitude)));
             CreateMap<UpdateBranchDTO, BranchEntity>()
                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => new Coordinates(src.Latitude, src.Longitude)));
+
+            CreateMap<ProductEntity, GetProductDTO>();
+            CreateMap<ProductEntity, GetProductDetailsDTO>()
+                .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
+                .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.BrandName))
+                .ForMember(dest => dest.Parameters, opt => opt.MapFrom(src => src.ProductParameters));
+            CreateMap<CreateProductDTO, ProductEntity>();
+            CreateMap<UpdateProductDTO, ProductEntity>();
+
+            CreateMap<ProductImagesEntity, GetProductImagesDTO>();
+            CreateMap<CreateProductImagesDTO, ProductImagesEntity>();
+
+            CreateMap<ParameterEntity, GetParameterDTO>();
+            CreateMap<CreateParameterDTO, ParameterEntity>();
+            CreateMap<UpdateParameterDTO, ParameterEntity>();
+
+            CreateMap<ProductParameterEntity, GetParameterDTO>();
+
+            CreateMap<CreateCategoryParameterDTO, CategoryParameterEntity>();
+            CreateMap<CategoryParameterEntity, GetParameterDTO>()
+                .ForMember(dest => dest.ParameterId,
+                    opt => opt.MapFrom(src => src.ParameterId))
+                .ForMember(dest => dest.ParameterName,
+                    opt => opt.MapFrom(src => src.Parameter!.ParameterName))
+                .ForMember(dest => dest.ParameterDataType,
+                    opt => opt.MapFrom(src => src.Parameter!.ParameterDataType));
+
         }
     }
 }

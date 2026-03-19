@@ -31,11 +31,11 @@ namespace KralInsaat.Services.Implementations
            
         public async Task<GetBranchDTO> GetBranchByIdAsync(int branchId)
         {
-            var branch = await _appDbContext.CompanyBranches
+            var entity = await _appDbContext.CompanyBranches
                 .AsNoTracking()
                 .FirstOrDefaultAsync(x => x.BranchId == branchId) ?? throw new NotFoundException("Branch not found");
 
-            var dto = _mapper.Map<GetBranchDTO>(branch);
+            var dto = _mapper.Map<GetBranchDTO>(entity);
 
             return dto;
         }

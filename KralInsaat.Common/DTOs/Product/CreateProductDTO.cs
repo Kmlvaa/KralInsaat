@@ -1,4 +1,5 @@
-﻿
+﻿using KralInsaat.Common.DTOs.ProductImages;
+using KralInsaat.Common.DTOs.ProductParameter;
 using System.ComponentModel.DataAnnotations;
 
 namespace KralInsaat.Common.DTOs.Product
@@ -16,5 +17,6 @@ namespace KralInsaat.Common.DTOs.Product
         [Required(ErrorMessage = "Product price is required.")]
         public decimal? ProductPrice { get; set; }
         public decimal? ProductSalePrice { get; set; }
+        //public List<FileUploadDto> ProductImages { get; set; } = [];
     }
 }

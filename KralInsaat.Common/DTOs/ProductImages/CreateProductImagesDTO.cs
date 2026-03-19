@@ -5,8 +5,7 @@ namespace KralInsaat.Common.DTOs.ProductImages
     public class CreateProductImagesDTO
     {
         [Required]
-        [Url(ErrorMessage = "Category cover image must be a valid URL.")]
-        public string? ProductImageUrl { get; set; }
+        public FileUploadDto File { get; set; }
         public bool IsCoverImage { get; set; }
     }
 }

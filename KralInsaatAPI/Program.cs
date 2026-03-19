@@ -97,6 +97,8 @@ namespace KralInsaat.API
             builder.Services.AddScoped<ITermsService, TermsService>();
             builder.Services.AddScoped<ISocialMediaAccountService, SocialMediaAccountService>();
             builder.Services.AddScoped<IBranchService, BranchService>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IParameterService, ParameterService>();
 
             var app = builder.Build();
 
