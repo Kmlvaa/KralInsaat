@@ -1,11 +1,17 @@
 using KralInsaat.API.Validators;
+using KralInsaat.Common.Options;
 using KralInsaat.Db;
 using KralInsaat.Services.Automapper;
 using KralInsaat.Services.Implementations;
 using KralInsaat.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace KralInsaat.API
 {
@@ -46,26 +52,26 @@ namespace KralInsaat.API
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Kran Insaat API", Version = "v1" });
 
-                //c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-                //{
-                //    Name = "Authorization",
-                //    Type = SecuritySchemeType.ApiKey,
-                //    Scheme = "Bearer",
-                //    BearerFormat = "JWT",
-                //    In = ParameterLocation.Header,
-                //    Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'"
-                //});
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. Example: 'Bearer {token}'"
+                });
 
-                //c.AddSecurityRequirement(new OpenApiSecurityRequirement
-                //{
-                //    {
-                //        new OpenApiSecurityScheme
-                //        {
-                //            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
-                //        },
-                //       Array.Empty<string>()
-                //    }
-                //});
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+                        },
+                       Array.Empty<string>()
+                    }
+                });
             });
 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -78,7 +84,7 @@ namespace KralInsaat.API
                 options.SignIn.RequireConfirmedEmail = false;
 
                 options.Password.RequiredLength = 6;
-                options.Password.RequireDigit = false;
+                options.Password.RequireDigit = true;
                 options.Password.RequireLowercase = false;
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
@@ -88,6 +94,38 @@ namespace KralInsaat.API
             })
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
+
+            builder.Services.Configure<JwtOptions>(builder.Configuration.GetSection("JwtOptions"));
+
+            JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
+
+            var jwtOptions = builder.Configuration
+                .GetSection("JwtOptions")
+                .Get<JwtOptions>();
+
+            var key = Encoding.ASCII.GetBytes(jwtOptions.Key);
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(jwtBearerOptions =>
+            {
+                jwtBearerOptions.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidIssuer = jwtOptions.Issuer,
+                    ValidAudience = jwtOptions.Audience,
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.Zero,
+                    NameClaimType = ClaimTypes.NameIdentifier,
+                    RoleClaimType = ClaimTypes.Role
+                };
+            });
 
             builder.Services.AddScoped<IServiceService, ServiceService>();
             builder.Services.AddScoped<IBrandService, BrandService>();
@@ -99,13 +137,14 @@ namespace KralInsaat.API
             builder.Services.AddScoped<IBranchService, BranchService>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IParameterService, ParameterService>();
+            builder.Services.AddScoped<IAuthService, AuthService>();
 
             var app = builder.Build();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment()) 
+            if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
                 app.UseSwaggerUI(c =>

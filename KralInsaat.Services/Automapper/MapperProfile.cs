@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KralInsaat.Common.DTOs.Auth;
 using KralInsaat.Common.DTOs.Branch;
 using KralInsaat.Common.DTOs.Brand;
 using KralInsaat.Common.DTOs.Category;
@@ -13,6 +14,7 @@ using KralInsaat.Common.DTOs.SocialMediaAccount;
 using KralInsaat.Common.DTOs.Terms;
 using KralInsaat.Common.Entities;
 using KralInsaat.Common.ValueObjects;
+using KralInsaat.Db;
 
 namespace KralInsaat.Services.Automapper
 {
@@ -20,6 +22,8 @@ namespace KralInsaat.Services.Automapper
     {
         public MapperProfile()
         {
+            CreateMap<RegisterRequestDTO, AppUser>();
+
             CreateMap<ServiceEntity, GetServiceDTO>();
             CreateMap<CreateServiceDTO, ServiceEntity>();
             CreateMap<UpdateServiceDTO, ServiceEntity>();
