@@ -29,5 +29,13 @@ namespace KralInsaat.API.Controllers
 
             return NoContent();
         }
+
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> RefreshToken([FromBody] RefreshTokenDTO model)
+        {
+            var result = await _authService.RefreshTokenAsync(model);
+
+            return Ok(result);
+        }
     }
 }

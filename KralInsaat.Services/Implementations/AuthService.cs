@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using KralInsaat.Common.DTOs.Auth;
+using KralInsaat.Common.Entities;
 using KralInsaat.Common.Exceptions;
 using KralInsaat.Common.Options;
 using KralInsaat.Db;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace KralInsaat.Services.Implementations
@@ -36,11 +38,12 @@ namespace KralInsaat.Services.Implementations
             if (!await _userManager.CheckPasswordAsync(user, model.Password))
                 throw new BadRequestException("Password is incorrect");
 
-            var accessToken = GenerateJwtToken(user);
+            var tokens = await GenerateJwtToken(user);
 
             var dto = new LoginResponseDTO 
             { 
-                AccessToken = accessToken.Result
+                AccessToken = tokens.accessToken,
+                RefreshToken = tokens.refreshToken,
             };
 
             return dto;
@@ -62,10 +65,38 @@ namespace KralInsaat.Services.Implementations
             await _appDbContext.SaveChangesAsync();
         }
 
+        public async Task<LoginResponseDTO> RefreshTokenAsync(RefreshTokenDTO model)
+        {
+            var incomingTokenHash = Convert.ToBase64String(
+                SHA256.HashData(Encoding.UTF8.GetBytes(model.Token))
+            );
+
+            var entity = await _appDbContext.RefreshTokens
+                .FirstOrDefaultAsync(x => x.RefreshToken == incomingTokenHash && !x.IsRefrehTokenRevoked);
+            if (entity == null || entity.RefreshTokenExpires < DateTime.UtcNow)
+                throw new BadRequestException("Invalid or expired refresh token");
+
+            entity.IsRefrehTokenRevoked = true;
+            await _appDbContext.SaveChangesAsync();
+
+            var user = await _userManager.FindByIdAsync(entity.UserId.ToString());
+
+            var tokens = await GenerateJwtToken(user);
+
+            var dto = new LoginResponseDTO
+            {
+                AccessToken = tokens.accessToken,
+                RefreshToken = tokens.refreshToken,
+            };
+
+            return dto;
+        }
+
 
         #region Token Generator
-        private async Task<string> GenerateJwtToken(AppUser user)
+        private async Task<(string accessToken, string refreshToken)> GenerateJwtToken(AppUser user)
         {
+            //Generate access token
             var claims = new List<Claim>
             {
                 new Claim("sub", user.UserId.ToString()),
@@ -86,7 +117,30 @@ namespace KralInsaat.Services.Implementations
 
             string accessTokenString = new JwtSecurityTokenHandler().WriteToken(accessToken);
 
-            return accessTokenString;
+            //Generate refresh token
+            var expiredRefreshTokens = await _appDbContext.RefreshTokens
+                .Where(x => x.UserId == user.UserId && x.RefreshTokenExpires < DateTime.UtcNow)
+                .ToListAsync();
+
+            if(expiredRefreshTokens.Any()) _appDbContext.RefreshTokens.RemoveRange(expiredRefreshTokens);
+
+            var refreshTokenPlain = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+            var refreshTokenHash = Convert.ToBase64String(
+                SHA256.HashData(Encoding.UTF8.GetBytes(refreshTokenPlain)));
+
+            var refreshTokenEntity = new RefreshTokenEntity
+            {
+                RefreshToken = refreshTokenHash,
+                UserId = user.UserId,
+                CreatedAt = DateTime.UtcNow,
+                IsRefrehTokenRevoked = false,
+                RefreshTokenExpires = DateTime.UtcNow.AddDays(_jwtOptions.Value.RefreshTokenDurationDays),
+            };
+
+            await _appDbContext.RefreshTokens.AddAsync(refreshTokenEntity);
+            await _appDbContext.SaveChangesAsync();
+
+            return (accessTokenString, refreshTokenPlain);
         }
 
         #endregion

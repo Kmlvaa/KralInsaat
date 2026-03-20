@@ -29,7 +29,8 @@ namespace KralInsaat.Db
         public DbSet<ParameterEntity> Parameters { get; set; }
         public DbSet<CategoryParameterEntity> CategoryParameters { get; set; }
         public DbSet<ProductParameterEntity> ProductParameters { get; set; }
-
+        public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
+         
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -43,6 +44,12 @@ namespace KralInsaat.Db
                 .WithMany(c => c.Branches)
                 .HasForeignKey(b => b.CompanyId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<RefreshTokenEntity>()
+                .HasOne<AppUser>()
+                .WithMany(x => x.RefreshTokens)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<BranchEntity>(builder =>
             {

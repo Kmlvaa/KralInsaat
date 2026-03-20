@@ -6,5 +6,6 @@ namespace KralInsaat.Services.Interfaces
     {
         Task<LoginResponseDTO> LoginAsync(LoginRequestDTO model);
         Task RegisterAsync(RegisterRequestDTO model);
+        Task<LoginResponseDTO> RefreshTokenAsync(RefreshTokenDTO model);
     }
 }

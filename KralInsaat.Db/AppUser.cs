@@ -1,4 +1,5 @@
-﻿using KralInsaat.Common.Entities.Base;
+﻿using KralInsaat.Common.Entities;
+using KralInsaat.Common.Entities.Base;
 using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
@@ -13,6 +14,7 @@ namespace KralInsaat.Db
             set => UserId = value;
         }
         public int UserId { get; set; }
+        public List<RefreshTokenEntity> RefreshTokens { get; set; } = [];
         public string? Name { get; set; }
         public string? Surname { get; set; }
         public string? Address { get; set; }
