@@ -1,5 +1,6 @@
 ﻿using KralInsaat.API.Controllers.Base;
 using KralInsaat.API.DTO;
+using KralInsaat.Common.DTOs.Pagination;
 using KralInsaat.Common.DTOs.Product;
 using KralInsaat.Common.DTOs.ProductImages;
 using KralInsaat.Common.DTOs.ProductParameter;
@@ -20,9 +21,9 @@ namespace KralInsaat.API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllProductes()
+        public async Task<IActionResult> GetAllProductes([FromQuery] PaginationRequestDTO pagination)
         {
-            var data = await _productservice.GetAllProductsAsync();
+            var data = await _productservice.GetAllProductsAsync(pagination);
 
             return Ok(data);
         }

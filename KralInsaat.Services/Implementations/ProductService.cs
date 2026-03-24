@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using KralInsaat.Common.DTOs.Pagination;
 using KralInsaat.Common.DTOs.Parameter;
 using KralInsaat.Common.DTOs.Product;
 using KralInsaat.Common.DTOs.ProductImages;
@@ -17,23 +18,27 @@ namespace KralInsaat.Services.Implementations
         private readonly IMapper _mapper;
         private readonly AppDbContext _appDbContext;
         private readonly IFileService _fileService;
-        public ProductService(IMapper mapper, AppDbContext appDbContext, IFileService fileService)
+        private readonly IPaginationService _paginationService;
+        public ProductService(IMapper mapper, AppDbContext appDbContext, IFileService fileService, IPaginationService paginationService)
         {
             _mapper = mapper;
             _appDbContext = appDbContext;
             _fileService = fileService;
+            _paginationService = paginationService;
         }
 
-        public async Task<List<GetProductDTO>> GetAllProductsAsync()
+        public async Task<PaginationResultDTO<GetProductDTO>> GetAllProductsAsync(PaginationRequestDTO pagination)
         {
-            var products = await _appDbContext.Products
+            var products = _appDbContext.Products
                 .Include(x => x.ProductImages)
                 .AsNoTracking()
-                .ToListAsync();
+                .AsQueryable();
 
-            var dto = _mapper.Map<List<GetProductDTO>>(products);
+            //var dto = _mapper.Map<List<GetProductDTO>>(products);
 
-            return dto;
+            var pagedResult = await _paginationService.GetPagedResultAsync<ProductEntity, GetProductDTO>(products, pagination.CurrentPage, pagination.PageSize);
+
+            return pagedResult;
         }
 
         public async Task<GetProductDetailsDTO> GetProductByIdAsync(int productId)

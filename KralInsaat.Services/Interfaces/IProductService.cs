@@ -1,4 +1,5 @@
-﻿using KralInsaat.Common.DTOs.Parameter;
+﻿using KralInsaat.Common.DTOs.Pagination;
+using KralInsaat.Common.DTOs.Parameter;
 using KralInsaat.Common.DTOs.Product;
 using KralInsaat.Common.DTOs.ProductImages;
 using KralInsaat.Common.DTOs.ProductParameter;
@@ -7,7 +8,7 @@ namespace KralInsaat.Services.Interfaces
 {
     public interface IProductService
     {
-        Task<List<GetProductDTO>> GetAllProductsAsync();
+        Task<PaginationResultDTO<GetProductDTO>> GetAllProductsAsync(PaginationRequestDTO pagination);
         Task<GetProductDetailsDTO> GetProductByIdAsync(int productId);
         Task CreateProductAsync(CreateProductDTO model, List<FileUploadDTO> files, string rootPath);
         Task UpdateProductAsync(int productId, UpdateProductDTO model); 

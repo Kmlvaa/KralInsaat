@@ -139,6 +139,7 @@ namespace KralInsaat.API
             builder.Services.AddScoped<IParameterService, ParameterService>();
             builder.Services.AddScoped<IAuthService, AuthService>();
             builder.Services.AddScoped<IFileService, FileService>();
+            builder.Services.AddScoped<IPaginationService, PaginationService>();
 
             var app = builder.Build();
 
