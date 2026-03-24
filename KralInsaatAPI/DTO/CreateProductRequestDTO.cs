@@ -1,9 +1,8 @@
-﻿using KralInsaat.Common.DTOs.ProductImages;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace KralInsaat.Common.DTOs.Product
+namespace KralInsaat.API.DTO
 {
-    public class CreateProductDTO
+    public class CreateProductRequestDTO
     {
         [Required(ErrorMessage = "Category ID is required.")]
         public int CategoryId { get; set; }
@@ -16,5 +15,7 @@ namespace KralInsaat.Common.DTOs.Product
         [Required(ErrorMessage = "Product price is required.")]
         public decimal? ProductPrice { get; set; }
         public decimal? ProductSalePrice { get; set; }
+        public List<IFormFile> ProductImages { get; set; } = [];
+        public int? CoverIndex { get; set; }
     }
 }

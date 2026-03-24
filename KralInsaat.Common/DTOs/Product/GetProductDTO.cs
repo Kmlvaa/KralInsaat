@@ -6,6 +6,6 @@
         public string? ProductName { get; set; }
         public double? ProductPrice { get; set; }
         public double? ProductSalePrice { get; set; }
-        //public List<GetProductImagesDTO> ProductImages { get; set; } = [];
+        public string? CoverImage { get; set; }
     }
 }

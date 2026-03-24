@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using KralInsaat.Common.DTOs.Parameter;
 using KralInsaat.Common.DTOs.Product;
+using KralInsaat.Common.DTOs.ProductImages;
 using KralInsaat.Common.DTOs.ProductParameter;
 using KralInsaat.Common.Entities;
 using KralInsaat.Common.Enums;
@@ -15,15 +16,18 @@ namespace KralInsaat.Services.Implementations
     {
         private readonly IMapper _mapper;
         private readonly AppDbContext _appDbContext;
-        public ProductService(IMapper mapper, AppDbContext appDbContext)
+        private readonly IFileService _fileService;
+        public ProductService(IMapper mapper, AppDbContext appDbContext, IFileService fileService)
         {
             _mapper = mapper;
             _appDbContext = appDbContext;
+            _fileService = fileService;
         }
 
         public async Task<List<GetProductDTO>> GetAllProductsAsync()
         {
             var products = await _appDbContext.Products
+                .Include(x => x.ProductImages)
                 .AsNoTracking()
                 .ToListAsync();
 
@@ -35,6 +39,7 @@ namespace KralInsaat.Services.Implementations
         public async Task<GetProductDetailsDTO> GetProductByIdAsync(int productId)
         {
             var product = await _appDbContext.Products
+                .Include (x => x.ProductImages)
                 .Include(p => p.ProductParameters)
                     .ThenInclude(pp => pp.Parameter)
                 .Include(p => p.Category)
@@ -46,11 +51,15 @@ namespace KralInsaat.Services.Implementations
             {
                 ProductId = product.ProductId,
                 CategoryId = product.CategoryId,
+                BrandName = product.Brand.BrandName,
+                CategoryName = product.Category.CategoryName,
                 BrandId = product.BrandId,
                 ProductName = product.ProductName,
                 ProductDescription = product.ProductDescription,
                 ProductPrice = product.ProductPrice,
                 ProductSalePrice = product.ProductSalePrice,
+                CoverImage = product.ProductImages.FirstOrDefault(x => x.IsCoverImage).ProductImageUrl,
+                Images = product.ProductImages.Select(x => x.ProductImageUrl).ToList(),
                 Parameters = product.ProductParameters.Select(pp => new GetParameterDTO
                 {
                     ParameterId = pp.ParameterId,
@@ -70,7 +79,7 @@ namespace KralInsaat.Services.Implementations
             return dto;
         }
 
-        public async Task CreateProductAsync(CreateProductDTO model)
+        public async Task CreateProductAsync(CreateProductDTO model, List<FileUploadDTO> images, string rootPath)
         {
             bool isCategoryExist = await _appDbContext.Categories
                 .AnyAsync(x => x.CategoryId == model.CategoryId);
@@ -88,25 +97,49 @@ namespace KralInsaat.Services.Implementations
 
             _appDbContext.Products.Add(entity);
             await _appDbContext.SaveChangesAsync();
+
+            if (images != null)
+            {
+                foreach (var image in images)
+                {
+                    var path = await _fileService.SaveAsync(image, rootPath, "productImages");
+
+                    await _appDbContext.ProductImages.AddAsync(new ProductImagesEntity
+                    {
+                        ProductId = entity.ProductId,
+                        ProductImageUrl = path,
+                        IsCoverImage = image.IsCoverImage
+                    });
+                }
+
+                await _appDbContext.SaveChangesAsync();
+            }
         }
 
         public async Task<List<GetParameterDTO>> GetProductParametersAsync(int productId)
         {
             var product = await _appDbContext.Products
+                .Include(x => x.ProductParameters)
+                    .ThenInclude(x => x.Parameter)
                 .FirstOrDefaultAsync(x => x.ProductId == productId) ?? throw new NotFoundException("Product not found");
 
-            var parameterIds = await _appDbContext.CategoryParameters
-             .Where(x => x.CategoryId == product.CategoryId)
-             .Select(x => x.ParameterId)
-             .ToListAsync();
 
-            var parameters = await _appDbContext.Parameters
-                .Where(x => parameterIds.Contains(x.ParameterId))
-                .ToListAsync();
+            var parametersDto = product.ProductParameters.Select(pp => new GetParameterDTO
+            {
+                ParameterId = pp.ParameterId,
+                ParameterName = pp.Parameter!.ParameterName,
+                ParameterDataType = pp.Parameter.ParameterDataType,
+                Value = pp.Parameter.ParameterDataType switch
+                {
+                    ParameterDataTypeEnum.Int => pp.IntValue,
+                    ParameterDataTypeEnum.Decimal => pp.DecimalValue,
+                    ParameterDataTypeEnum.Bool => pp.BoolValue,
+                    ParameterDataTypeEnum.String => pp.StringValue,
+                    _ => null
+                }
+            }).ToList();
 
-            var dto = _mapper.Map<List<GetParameterDTO>>(parameters);
-
-            return dto;
+            return parametersDto;
         }
 
         public async Task SetProductParametersAsync(int productId, SetProductParameterDTO model)

@@ -1,5 +1,7 @@
 ﻿using KralInsaat.API.Controllers.Base;
+using KralInsaat.API.DTO;
 using KralInsaat.Common.DTOs.Product;
+using KralInsaat.Common.DTOs.ProductImages;
 using KralInsaat.Common.DTOs.ProductParameter;
 using KralInsaat.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -9,10 +11,12 @@ namespace KralInsaat.API.Controllers
     public class ProductController : BaseController
     {
         private readonly IProductService _productservice;
+        private readonly IWebHostEnvironment _env;
 
-        public ProductController(IProductService product)
+        public ProductController(IProductService product, IWebHostEnvironment env)
         {
             _productservice = product;
+            _env = env;
         }
 
         [HttpGet]
@@ -32,9 +36,30 @@ namespace KralInsaat.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateProduct([FromBody] CreateProductDTO model)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> CreateProduct([FromForm] CreateProductRequestDTO model)
         {
-            await _productservice.CreateProductAsync(model);
+            var productDTO = new CreateProductDTO
+            {
+                ProductName = model.ProductName,
+                ProductDescription = model.ProductDescription,
+                ProductPrice = model.ProductPrice,
+                ProductSalePrice = model.ProductSalePrice,
+                BrandId = model.BrandId,
+                CategoryId = model.CategoryId,
+            };
+
+            var imageDtos = model.ProductImages?.Select((file, index) => new FileUploadDTO
+            {
+                FileName = file.FileName,
+                ContentType = file.ContentType,
+                Length = file.Length,
+                Content = file.OpenReadStream(),
+                IsCoverImage = model.CoverIndex == index
+            }).ToList();
+
+
+            await _productservice.CreateProductAsync(productDTO, imageDtos, _env.WebRootPath);
 
             return NoContent();
         }

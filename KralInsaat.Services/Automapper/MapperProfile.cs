@@ -60,16 +60,21 @@ namespace KralInsaat.Services.Automapper
             CreateMap<UpdateBranchDTO, BranchEntity>()
                .ForMember(dest => dest.Location, opt => opt.MapFrom(src => new Coordinates(src.Latitude, src.Longitude)));
 
-            CreateMap<ProductEntity, GetProductDTO>();
+            CreateMap<ProductEntity, GetProductDTO>()
+                .ForMember(dest => dest.CoverImage,
+                    opt => opt.MapFrom(src => src.ProductImages
+                        .Where(x => x.IsCoverImage)
+                        .Select(x => x.ProductImageUrl)
+                        .FirstOrDefault()));
             CreateMap<ProductEntity, GetProductDetailsDTO>()
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category.CategoryName))
                 .ForMember(dest => dest.BrandName, opt => opt.MapFrom(src => src.Brand.BrandName))
-                .ForMember(dest => dest.Parameters, opt => opt.MapFrom(src => src.ProductParameters));
+                .ForMember(dest => dest.Parameters, opt => opt.MapFrom(src => src.ProductParameters))
+                .ForMember(dest => dest.Images,
+                    opt => opt.MapFrom(src => src.ProductImages
+                        .Select(x => x.ProductImageUrl)));
             CreateMap<CreateProductDTO, ProductEntity>();
             CreateMap<UpdateProductDTO, ProductEntity>();
-
-            CreateMap<ProductImagesEntity, GetProductImagesDTO>();
-            CreateMap<CreateProductImagesDTO, ProductImagesEntity>();
 
             CreateMap<ParameterEntity, GetParameterDTO>();
             CreateMap<CreateParameterDTO, ParameterEntity>();
