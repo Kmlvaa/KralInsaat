@@ -30,7 +30,14 @@ namespace KralInsaat.Db
         public DbSet<CategoryParameterEntity> CategoryParameters { get; set; }
         public DbSet<ProductParameterEntity> ProductParameters { get; set; }
         public DbSet<RefreshTokenEntity> RefreshTokens { get; set; }
-         
+        public DbSet<InstallmentPlanEntity> InstallmentPlans { get; set; }
+        public DbSet<PaymentCardEntity> PaymentCards { get; set; }
+        public DbSet<PaymentMethodEntity> PaymentMethods { get; set; }
+        public DbSet<ProductPaymentEntity> ProductPayments { get; set; }
+        public DbSet<OrderEntity> Orders { get; set; }
+        public DbSet<OrderItemEntity> OrderItems { get; set; }
+        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
